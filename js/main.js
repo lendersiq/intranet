@@ -1,57 +1,83 @@
 /********************************************************
- * (A) KPI DATA + RENDERING
+ * (A) KPI DATA 
  *******************************************************/
 const kpis = {
   ROA: {
     label: "Return on Assets",
-    data: [0.39, 0.43, 0.49, 0.42, 0.59, 0.56, 0.57]
+    data: [0.39, 0.43, 0.49, 0.42, 0.59, 0.56, 0.57],
+    goal: .39,
+    unit: '%'
   },
   Engagement: {
     label: "Employee Engagement",
-    data: [72, 75, 70, 78, 81, 84, 79]
+    data: [72, 75, 70, 78, 81, 84, 79],
+    goal: 90,
+    unit: ''
   }
 };
 
-function renderKPIs() {
+function renderAllKPIs() {
   const kpiGrid = document.getElementById("kpiGrid");
-  kpiGrid.innerHTML = ""; // clear if re-rendering
+  kpiGrid.innerHTML = ""; // Clear existing content if re-rendering
 
-  Object.keys(kpis).forEach(kpiKey => {
-    const { label, data } = kpis[kpiKey];
+  // For each KPI, create a card
+  for (const key in kpis) {
+    const { label, data, goal, unit } = kpis[key];
+    
+    // Current value is the last data point
     const currentValue = data[data.length - 1];
-    const lastFour = data.slice(-4);
 
-    // Card
+    // Build the KPI card
     const card = document.createElement("div");
     card.className = "kpi-card";
 
-    // Details
     const detailDiv = document.createElement("div");
     detailDiv.className = "kpi-details";
 
+    // Primary label
     const labelEl = document.createElement("span");
     labelEl.className = "kpi-label";
     labelEl.textContent = label;
 
+    // Main KPI value
     const valueEl = document.createElement("span");
     valueEl.className = "kpi-value";
-    valueEl.textContent = currentValue.toFixed(2) + "%"; // show as percentage
+    valueEl.textContent = currentValue.toFixed(2) + unit;
 
+    // Compute the difference
+    const difference = currentValue - goal;
+
+    // Create a smaller text element for the difference
+    const differenceEl = document.createElement("span");
+    differenceEl.className = "kpi-difference"; // We'll style this in CSS
+    differenceEl.textContent = `(${difference >= 0 ? "+" : ""}${difference.toFixed(2)}${unit} vs. goal)`;
+
+    // Apply color based on positive/negative
+    if (difference >= 0) {
+      differenceEl.style.color = "green";  // or your complementary green
+    } else {
+      differenceEl.style.color = "crimson"; // or "ruby" / any red-like color
+    }
+
+    // Append elements
     detailDiv.appendChild(labelEl);
     detailDiv.appendChild(valueEl);
+    detailDiv.appendChild(differenceEl);
 
-    // Sparkline canvas
+    // Create sparkline canvas
     const sparkCanvas = document.createElement("canvas");
     sparkCanvas.className = "kpi-sparkline";
     sparkCanvas.width = 100;
     sparkCanvas.height = 40;
 
+    // Put it all together
     card.appendChild(detailDiv);
     card.appendChild(sparkCanvas);
     kpiGrid.appendChild(card);
 
-    drawSparkline(sparkCanvas, lastFour);
-  });
+    // Draw sparkline using last 4 data points
+    drawSparkline(sparkCanvas, data.slice(-4));
+  }
 }
 
 function drawSparkline(canvas, dataArray) {
@@ -217,7 +243,7 @@ function advancedAiSearch(query) {
  *******************************************************/
 document.addEventListener("DOMContentLoaded", () => {
   // Render KPI cards
-  renderKPIs();
+  renderAllKPIs();
 
   // Setup "intra-link" nav -> open in iframe
   const contentFrame = document.getElementById("contentFrame");
