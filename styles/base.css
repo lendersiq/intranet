@@ -241,3 +241,20 @@
   /* A subtle focus ring using mountain-blue with transparency */
   box-shadow: 0 0 0 3px rgba(11, 56, 137, 0.4);
 }
+
+.beta-tag {
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 0.55em;        /* Even smaller than before */
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  
+  background-color: var(--sun-yellow);
+  color: var(--mountain-blue);
+  
+  padding: 1px 3px;         /* Minimal padding for compactness */
+  margin-left: 3px;         /* Very close to the heading */
+  border-radius: 2px;
+  
+  display: inline-block;
+  vertical-align: middle;
+}
