@@ -1,7 +1,6 @@
 :root {
     /* Example using Montserrat from Google Fonts, or fallback to Trebuchet MS. */
     --font-family: 'Montserrat', 'Trebuchet MS', Arial, sans-serif;
-  
     --mountain-blue: #0B3889;
     --river-blue: #008CFF;
     --sun-yellow: #E8BA44;
@@ -172,10 +171,10 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-  }
+}
   
-  /* Results Container */
-  #aiSearchResults {
+/* Results Container */
+#aiSearchResults {
     padding: 1rem;
     
     /* Enable text wrapping */
@@ -184,41 +183,61 @@
   
     /* Some spacing from surrounding elements */
     margin-top: 1rem;
-  }
+}
   
+.blueButton {
+  /* Base styling */
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 600;
+  line-height: 20px;
+  padding: 10px 15px;
 
-  .gold {
-    border: 4px solid #e8ba44;
-    position: relative;
-    display: inline-block;
-    color: #0B3889;
-    line-height: 20px;
-    text-decoration: none;
-    font-weight: 600;
-    z-index: 1;
-    padding: 10px 15px;
-    transition: all 0.3s ease-in-out;
-    border-left: 48px solid #e8ba44;
-    color: #fff;
-    overflow: hidden;
+  /* Border styling with a distinctive thick left border */
+  border: 4px solid var(--mountain-blue);
+  border-left: 48px solid var(--mountain-blue);
+  border-radius: 8px;
+
+  /* Colors and background */
+  color: var(--mountain-blue);           /* Text color in normal state */
+  background-color: var(--white);          /* White background */
+
+  /* Ensure content doesn't spill over during transitions */
+  overflow: hidden;
+
+  /* Smooth transitions for color, scaling, and shadow */
+  transition: color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.gold::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: #e8ba44;
-    transition: all 0.3s ease-in-out;
-    z-index: -1;
+/* Pseudo-element for the sliding background effect */
+.blueButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;  /* Start off-screen */
+  width: 100%;
+  height: 100%;
+  background: var(--mountain-blue);
+  transition: left 0.3s ease-in-out;
+  z-index: -1;  /* Place behind the text */
 }
 
-.gold:hover::before {
-    left: 0;
+/* When hovered, slide in the background */
+.blueButton:hover::before {
+  left: 0;
 }
 
-.gold:hover {
-    color: #0B3889;
+/* Hover state: invert colors and add subtle effects */
+.blueButton:hover {
+  color: var(--white);
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Optional focus styling for accessibility */
+.blueButton:focus {
+  outline: none;
+  /* A subtle focus ring using mountain-blue with transparency */
+  box-shadow: 0 0 0 3px rgba(11, 56, 137, 0.4);
 }
