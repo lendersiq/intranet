@@ -260,8 +260,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const iframe = document.createElement("iframe");
       iframe.src = url;
       iframe.width = "100%";
-      iframe.height = "100%";
       iframe.style.border = "none";
+  
+      // Function to adjust iframe height dynamically
+      function adjustIframeHeight() {
+        const headerHeight = document.querySelector("header").offsetHeight;
+        const navHeight = document.querySelector("nav").offsetHeight;
+        const availableHeight = window.innerHeight - (headerHeight + navHeight);
+        iframe.style.height = availableHeight + "px";
+      }
+  
+      // Set height on load & update on resize
+      adjustIframeHeight();
+      window.addEventListener("resize", adjustIframeHeight);
   
       // Clear previous content and add iframe
       rightPanel.innerHTML = "";
@@ -274,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.open(url, "_blank");
       };
   
-      console.log(`Iframe added for ${url}. If you see the content, it works!`);
+      console.log(`Iframe added for ${url}. Adjusting height dynamically.`);
     } else {
       // Fetch for internal HTML pages only
       fetch(url)
@@ -292,8 +303,8 @@ document.addEventListener("DOMContentLoaded", () => {
           rightPanel.innerHTML = `<p style="color: red;">Failed to load content.</p>`;
         });
     }
-  }  
-  
+  }
+   
   // Attach event listeners to intra-links
   document.querySelectorAll(".intra-link").forEach(link => {
     link.addEventListener("click", (e) => {
