@@ -242,54 +242,166 @@ function advancedAiSearch(query) {
  * (C) INIT + NAV/IFRAME + EVENT HANDLERS
  *******************************************************/
 document.addEventListener("DOMContentLoaded", () => {
-  // Render KPI cards
-  renderAllKPIs();
+  // Select the main content area (right-panel) where pages will be loaded
+  const rightPanel = document.querySelector(".right-panel");
 
-  // Setup "intra-link" nav -> open in iframe
-  const contentFrame = document.getElementById("contentFrame");
+  // Ensure right-panel exists
+  if (!rightPanel) {
+    console.error("Error: .right-panel not found in the DOM.");
+    return;
+  }
+  
+  // Function to load content dynamically into the right panel
+  function loadPage(url) {
+    const rightPanel = document.querySelector(".right-panel");
+  
+    // If the URL is external (http/https), try embedding it in an iframe
+    if (url.startsWith("http")) {
+      const iframe = document.createElement("iframe");
+      iframe.src = url;
+      iframe.width = "100%";
+      iframe.height = "100%";
+      iframe.style.border = "none";
+  
+      // Clear previous content and add iframe
+      rightPanel.innerHTML = "";
+      rightPanel.appendChild(iframe);
+  
+      // Only log a warning if the iframe truly fails to load
+      iframe.onerror = () => {
+        console.warn(`Iframe failed to load: ${url}. Opening in a new tab.`);
+        rightPanel.innerHTML = ""; // Remove iframe
+        window.open(url, "_blank");
+      };
+  
+      console.log(`Iframe added for ${url}. If you see the content, it works!`);
+    } else {
+      // Fetch for internal HTML pages only
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(html => {
+          rightPanel.innerHTML = html; // Replace right-panel content
+        })
+        .catch(error => {
+          console.error("Error loading page:", error);
+          rightPanel.innerHTML = `<p style="color: red;">Failed to load content.</p>`;
+        });
+    }
+  }  
+  
+  // Attach event listeners to intra-links
   document.querySelectorAll(".intra-link").forEach(link => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
       const url = link.getAttribute("data-url");
-      contentFrame.src = url; // may or may not be iframable
+      if (url) {
+        loadPage(url);
+      }
     });
   });
 
+  // If no page is loaded, render the default KPI dashboard
+  if (rightPanel.innerHTML.trim() === "") {
+    renderDashboard();
+  }
+});
+
+/********************************************************
+ * (A) KPI DASHBOARD RENDERING
+ *******************************************************/
+
+// Function to render the KPI dashboard
+function renderDashboard() {
+  const rightPanel = document.querySelector(".right-panel");
+  rightPanel.innerHTML = `
+    <h2>Performance Dashboard</h2>
+    <div class="kpi-grid" id="kpiGrid"></div>
+  `;
+
+  renderAllKPIs(); // Render the KPI grid inside the new right panel
+}
+
+function renderAllKPIs() {
+  const kpiGrid = document.getElementById("kpiGrid");
+  kpiGrid.innerHTML = ""; // Clear existing content
+
+  for (const key in kpis) {
+    const { label, data, goal, unit } = kpis[key];
+
+    const currentValue = data[data.length - 1];
+
+    const card = document.createElement("div");
+    card.className = "kpi-card";
+
+    const detailDiv = document.createElement("div");
+    detailDiv.className = "kpi-details";
+
+    const labelEl = document.createElement("span");
+    labelEl.className = "kpi-label";
+    labelEl.textContent = label;
+
+    const valueEl = document.createElement("span");
+    valueEl.className = "kpi-value";
+    valueEl.textContent = currentValue.toFixed(2) + unit;
+
+    const difference = currentValue - goal;
+
+    const differenceEl = document.createElement("span");
+    differenceEl.className = "kpi-difference";
+    differenceEl.textContent = `(${difference >= 0 ? "+" : ""}${difference.toFixed(2)}${unit} vs. goal)`;
+
+    differenceEl.style.color = difference >= 0 ? "green" : "crimson";
+
+    detailDiv.appendChild(labelEl);
+    detailDiv.appendChild(valueEl);
+    detailDiv.appendChild(differenceEl);
+
+    const sparkCanvas = document.createElement("canvas");
+    sparkCanvas.className = "kpi-sparkline";
+    sparkCanvas.width = 100;
+    sparkCanvas.height = 40;
+
+    card.appendChild(detailDiv);
+    card.appendChild(sparkCanvas);
+    kpiGrid.appendChild(card);
+
+    drawSparkline(sparkCanvas, data.slice(-4));
+  }
+}
+
+/********************************************************
+ * (B) AI SEARCH FUNCTIONALITY
+ *******************************************************/
+document.addEventListener("DOMContentLoaded", () => {
   function handleSearch() {
     const aiSearchInput = document.getElementById("aiSearchInput");
     const aiSearchResults = document.getElementById("aiSearchResults");
 
     const query = aiSearchInput.value.trim();
     if (!query) {
-    aiSearchResults.textContent = "Please enter a search.";
-    return;
+      aiSearchResults.textContent = "Please enter a search.";
+      return;
     }
 
-    // Suppose advancedAiSearch is the function from your logic
     const resultMsg = advancedAiSearch(query);
     aiSearchResults.textContent = resultMsg;
   }
 
   const aiSearchInput = document.getElementById("aiSearchInput");
 
-    // 1) BLUR event
-    aiSearchInput.addEventListener("blur", () => {
-        handleSearch();
-    });
+  aiSearchInput.addEventListener("blur", () => {
+    handleSearch();
+  });
 
-    // 2) KEYDOWN for Enter or Tab
-    aiSearchInput.addEventListener("keydown", (event) => {
-        // Check the pressed key
-        if (event.key === "Enter") {
-        // Prevent default form submission if applicable
-        event.preventDefault();
-        handleSearch();
-        } else if (event.key === "Tab") {
-        // Typically you might allow Tab to move focus, but if you'd like
-        // to trigger the search on Tab, just call handleSearch here:
-        // (Optionally, remove preventDefault so user can still tab away)
-        // event.preventDefault(); // <== only if you DO NOT want the user to leave the field
-        handleSearch();
-        }
-    });
+  aiSearchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === "Tab") {
+      event.preventDefault();
+      handleSearch();
+    }
+  });
 });
