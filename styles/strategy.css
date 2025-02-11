@@ -1,0 +1,76 @@
+.strategy-container {
+    padding: 0 10px;
+}
+
+/* Container for logo and overlay tables */
+.logo-container {
+    position: relative;
+    width: 100%;
+    max-width: 650px; /* Adjust as needed */
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  /* Logo as the background */
+  .background-logo {
+    width: 100%;
+    height: auto;
+    opacity: 0.35; /* Adjust transparency */
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Table Overlay */
+  .table-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Styling for Strategy Tables */
+  .strategy-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+    backdrop-filter: blur(5px); /* Subtle blur for readability */
+    margin: 10px 0;
+  }
+  
+/* Table Header Styling */
+.strategy-table th {
+  background-color: #E8BA44; /* Sun Yellow */
+  color: black;
+  padding: 10px;
+  text-align: left;
+}
+
+/* Main Header (Span 3 Columns) */
+.strategy-table .main-header {
+  background-color: #0B3889; /* Mountain Blue */
+  color: white;
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 12px;
+}
+
+/* Table Rows - Alternating Grey */
+.strategy-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2; /* Light Grey */
+}
+
+.strategy-table tbody tr:nth-child(odd) {
+  background-color: #e0e0e0; /* Slightly Darker Grey */
+}
+
+/* Table Cell Padding */
+.strategy-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
