@@ -243,6 +243,47 @@
   box-shadow: 0 0 0 3px rgba(11, 56, 137, 0.4);
 }
 
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%; /* Aligns directly under button's bottom edge */
+  left: 0;
+  /* REMOVE margin-top: 8px; or any margin that creates the gap */
+  min-width: 180px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  z-index: 999;
+  padding: 8px 0;
+}
+
+/* Each link in the dropdown menu */
+.dropdown-menu a {
+  display: block;
+  padding: 10px 16px;
+  text-decoration: none;
+  color: var(--mountain-blue);
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Hover effect on dropdown links */
+.dropdown-menu a:hover {
+  background-color: var(--mountain-blue);
+  color: var(--white);
+}
+
+/* Show the menu when hovering on the .dropdown container */
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
 .beta-tag {
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
   font-size: 0.55em;        /* Even smaller than before */
