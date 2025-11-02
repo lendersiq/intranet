@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Intranet</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
+    <!-- https://github.com/FortAwesome/Font-Awesome/releases/tag/6.5.0 -->
+</head>
+<body>
+    <!-- ===== TOP BAR ===== -->
+    <header class="top-bar">
+        <div class="logo">MyCo Intranet</div>
+        <div class="search-box">
+            <input type="text" placeholder="Search links…" id="globalSearch">
+            <i class="fas fa-search"></i>
+        </div>
+        <button id="darkModeToggle" title="Toggle dark mode">
+            <i class="fas fa-moon"></i>
+        </button>
+    </header>
+
+    <!-- ===== MAIN GRID ===== -->
+    <main class="grid" id="linkGrid">
+        <!-- Cards are injected by JS -->
+    </main>
+
+    <!-- ===== VIDEO MODAL ===== -->
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <video id="modalVideo" controls></video>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
