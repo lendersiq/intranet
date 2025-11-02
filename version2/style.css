@@ -1,0 +1,105 @@
+/* ==== RESET & BASE ==== */
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body {
+    /* ----- 3-COLOR CHEVRON BACKGROUND ----- */
+    background:
+        linear-gradient(135deg, #003366 25%, transparent 25%),
+        linear-gradient(225deg, #003366 25%, transparent 25%),
+        linear-gradient(135deg, #87CEEB 50%, transparent 50%),
+        linear-gradient(225deg, #87CEEB 50%, transparent 50%),
+        #FFD700;                                   /* gold base */
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px, 0 0, 30px 30px, 0 0;
+    color: #333;
+    transition: background 0.3s;
+}
+
+/* ==== DARK MODE ==== */
+body.dark { color:#eee; }
+body.dark .top-bar { background:#1a1a1a; }
+body.dark .card { background:rgba(40,40,40,0.9); border-color:#444; }
+body.dark .card h3 { color:#fff; }
+
+/* ==== TOP BAR ==== */
+.top-bar {
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0.8rem 1.5rem;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(8px);
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+.logo { font-weight:700; font-size:1.4rem; }
+.search-box { position:relative; flex:1; max-width:400px; margin:0 1rem; }
+.search-box input {
+    width:100%; padding:0.6rem 2.2rem 0.6rem 0.8rem;
+    border:1px solid #ccc; border-radius:6px;
+    font-size:0.95rem;
+}
+.search-box i { position:absolute; right:0.8rem; top:50%; transform:translateY(-50%); color:#777; }
+#darkModeToggle { background:none; border:none; font-size:1.3rem; cursor:pointer; }
+
+/* ==== GRID ==== */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+    padding: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* ==== CARD ==== */
+.card {
+    background:rgba(255,255,255,0.92);
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,.1);
+    transition:transform .2s, box-shadow .2s;
+    cursor:pointer;
+    display:flex; flex-direction:column;
+}
+.card:hover { transform:translateY(-4px); box-shadow:0 8px 20px rgba(0,0,0,.15); }
+.card .icon {
+    height:50px; display:flex; align-items:center; justify-content:center;
+    font-size:1.8rem; color:#fff;
+}
+.card h3 { padding:0.8rem 1rem 0.4rem; font-size:1.1rem; }
+.card p { padding:0 1rem 1rem; font-size:0.9rem; color:#555; flex:1; }
+
+/* ---- ORIGINAL COLORS ---- */
+.card.media   .icon { background:#e91e63; }
+.card.news    .icon { background:#ff9800; }
+.card.google  .icon { background:#4285f4; }
+.card.saas    .icon { background:#4caf50; }
+.card.app     .icon { background:#9c27b0; }
+
+/* ---- NEW CATEGORY COLORS ---- */
+.card.rates   .icon { background:#c9a02c; }   /* gold-tone */
+.card.learning .icon { background:#003366; } /* navy */
+.card.smart   .icon { background:#87CEEB; }  /* light-blue */
+.card.dashboard .icon { background:#6A5ACD; }/* slate-blue */
+
+/* ==== MODAL ==== */
+.modal {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.7); align-items:center; justify-content:center;
+    z-index:200;
+}
+.modal-content {
+    position:relative; background:#fff; border-radius:12px;
+    max-width:90%; max-height:90%; overflow:hidden;
+}
+.modal-content video { width:100%; height:auto; }
+.close {
+    position:absolute; top:12px; right:16px;
+    font-size:2rem; color:#fff; cursor:pointer;
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width:600px) {
+    .grid { grid-template-columns:1fr; padding:1rem; }
+    .top-bar { flex-direction:column; gap:.5rem; }
+    .search-box { max-width:none; }
+}
