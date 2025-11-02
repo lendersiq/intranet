@@ -74,12 +74,11 @@ body.dark .card h3 { color:#fff; }
 .card.google  .icon { background:#4285f4; }
 .card.saas    .icon { background:#4caf50; }
 .card.app     .icon { background:#9c27b0; }
-
-/* ---- NEW CATEGORY COLORS ---- */
 .card.rates   .icon { background:#c9a02c; }   /* gold-tone */
 .card.learning .icon { background:#003366; } /* navy */
 .card.smart   .icon { background:#87CEEB; }  /* light-blue */
 .card.dashboard .icon { background:#6A5ACD; }/* slate-blue */
+.card.policy .icon { background:#607D8B; } /* slate-grey */
 
 /* ==== MODAL ==== */
 .modal {

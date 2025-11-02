@@ -22,11 +22,12 @@ const links = [
     {title:"HR Portal", url:"https://hr.example.com", type:"app", icon:"fas fa-users-cog"},
     {title:"Finance Dashboard", url:"https://finance.example.com", type:"app", icon:"fas fa-chart-line"},
 
-    // ---------- *** NEW LINKS *** ----------
+    // ---------- Other ----------
     {title:"Rates", url:"https://rates.example.com", type:"rates", icon:"fas fa-percentage"},
     {title:"Learning", url:"https://learning.example.com", type:"learning", icon:"fas fa-graduation-cap"},
     {title:"Smart Applications", url:"https://smartapps.example.com", type:"smart", icon:"fas fa-robot"},
-    {title:"Dashboards", url:"https://dashboards.example.com", type:"dashboard", icon:"fas fa-tachometer-alt"}
+    {title:"Dashboards", url:"https://dashboards.example.com", type:"dashboard", icon:"fas fa-tachometer-alt"},
+    {title:"Policy", url:"https://policy.example.com", type:"policy", icon:"fas fa-gavel"}
 ];
 
 /* ====================== STORAGE ====================== */
