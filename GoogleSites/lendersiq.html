@@ -1,0 +1,807 @@
+<style>
+  /* ... (CSS block remains unchanged) ... */
+  .pricer-container {
+    /* --- Global Design Variables (The Fix) --- */
+    --primary-color: #005A9C;
+    --secondary-color: #00A9E0;
+    --bg-color: #f8f9fa;
+    --border-color: #dee2e6;
+    --text-color: #212529;
+    --label-color: #495057;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+
+    /* Original container styles now applied */
+    font-family: Arial, sans-serif;
+    background: var(--bg-color);
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 900px;
+    margin: 0 auto;
+    color: var(--text-color);
+  }
+
+  .screen {
+    transition: opacity 0.3s ease;
+  }
+
+  #api-status {
+    font-style: italic;
+    color: var(--label-color);
+    padding: 10px;
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 15px;
+  }
+
+  /* --- Form Layout --- */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group label {
+    font-weight: bold;
+    color: var(--label-color);
+    margin-bottom: 5px;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group select {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1em;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Input Groups (for $ and %) */
+  .input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-group .input-symbol {
+    position: absolute;
+    padding: 10px;
+    color: var(--label-color);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .input-group input[type="number"] {
+    padding-left: 30px;
+  }
+
+  .input-group .input-symbol-right {
+    position: relative;
+    padding: 10px;
+    order: 1;
+  }
+
+  .input-group input.rate-input {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  /* Sliders */
+  .slider-group {
+    width: 100%;
+  }
+
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    color: var(--label-color);
+    margin-bottom: 5px;
+  }
+
+  .slider-value {
+    font-weight: normal;
+    background: var(--secondary-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 5px;
+    outline: none;
+  }
+
+  /* Risk Rating Layout Fixes */
+  .form-group.risk-and-newrel {
+      display: grid; 
+      grid-template-columns: 3fr 2fr; 
+      gap: 15px;
+      flex-direction: row; 
+  }
+
+  .risk-select-group {
+      display: flex;
+      flex-direction: column;
+      width: 100%; 
+  }
+
+  .risk-select-group select {
+      min-width: 150px; 
+  }
+
+  .checkbox-group {
+      display: flex;
+      align-items: flex-end; 
+      width: 100%;
+      padding-bottom: 10px; 
+  }
+
+  .checkbox-group input {
+      margin-right: 5px;
+      width: 18px;
+      height: 18px;
+  }
+
+  .checkbox-group label {
+      font-weight: normal;
+      margin-bottom: 0; 
+      white-space: nowrap; 
+  }
+
+  /* Button */
+  #submit-btn {
+    grid-column: 1 / -1;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+  }
+
+  #submit-btn:hover:not(:disabled) {
+    background-color: #004a80;
+  }
+
+  #submit-btn:disabled {
+    background-color: var(--border-color);
+    cursor: not-allowed;
+  }
+
+  /* --- Results Section --- */
+  #results {
+    margin-top: 0; 
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .results-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .results-card h4 {
+    color: var(--primary-color);
+    margin-top: 0;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+  }
+
+  .results-card p {
+    margin: 10px 0;
+    font-size: 1.1em;
+  }
+
+  .results-card .result-label {
+    font-weight: bold;
+    color: var(--label-color);
+  }
+
+  .results-card .result-value {
+    float: right;
+    font-weight: bold;
+  }
+
+  .results-card .profit { color: var(--success-color); }
+  .results-card .loss { color: var(--danger-color); }
+
+  /* ROA Grade Styling */
+  .grade-A { background-color: var(--success-color); color: white; padding: 2px 8px; border-radius: 4px; font-size: 1.2em; }
+  .grade-B { background-color: #3399FF; color: white; padding: 2px 8px; border-radius: 4px; font-size: 1.2em; }
+  .grade-C { background-color: var(--warning-color); color: var(--text-color); padding: 2px 8px; border-radius: 4-px; font-size: 1.2em; }
+  .grade-D { background-color: #FFA07A; color: var(--text-color); padding: 2px 8px; border-radius: 4px; font-size: 1.2em; }
+  .grade-F { background-color: var(--danger-color); color: white; padding: 2px 8px; border-radius: 4px; font-size: 1.2em; }
+
+  /* Results Buttons */
+  .results-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .results-actions button {
+    padding: 10px 15px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.2s;
+  }
+
+  #back-to-form-btn {
+    background-color: var(--border-color);
+    color: var(--text-color);
+  }
+
+  /* --- Print Styling: Only Print Results, Optimized for Fit --- */
+  @media print {
+    body {
+        margin: 0 !important; 
+        padding: 0 !important;
+    }
+
+    /* 1. Hide external site elements (like Google Sites header) */
+    header, 
+    .site-header, 
+    .goog-toolbar {
+        display: none !important;
+    }
+
+    /* 2. Hide everything *inside* your container first */
+    .pricer-container * {
+      visibility: hidden;
+    }
+
+    /* 3. Make the main container and the results screen visible */
+    .pricer-container, 
+    #results-screen, 
+    #results-screen * {
+      visibility: visible !important;
+    }
+
+    /* 4. Position the results container for printing */
+    #results-screen {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100% !important; 
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    /* 5. Hide screen-specific buttons */
+    .results-actions, 
+    #api-status, 
+    #back-to-form-btn { 
+      display: none !important;
+    }
+
+    /* 6. Clean up internal results layout and hide the loan details card */
+    .pricer-container {
+        background: white !important; 
+        box-shadow: none !important;
+        padding: 10px !important; 
+    }
+
+    .loan-details-card {
+        display: none !important;
+    }
+
+    .results-grid {
+      grid-template-columns: 1fr; 
+      gap: 10px; 
+      width: 100% !important; 
+    }
+    .results-card {
+        box-shadow: none;
+        border: 1px solid #ccc; 
+    }
+    .results-card .result-value {
+        word-break: break-all;
+    }
+  }
+
+</style>
+
+<div class="pricer-container">
+  <p id="api-status">Loading API cost of funds...</p>
+
+  <div id="form-screen" class="screen">
+    <form id="loan-pricer-form">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="customerName">Customer Name</label>
+          <input type="text" id="customerName" placeholder="ABC Corporation">
+        </div>
+
+        <div class="form-group">
+          <label for="loanType">Loan Type</label>
+          <select id="loanType">
+            <option value="cre">Commercial Real Estate</option>
+            <option value="cni">Commercial & Industrial</option>
+            <option value="equip">Equipment</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="principal">Principal</label>
+          <div class="input-group">
+            <span class="input-symbol">$</span>
+            <input type="number" id="principal" value="1000000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="rate">Annual Rate</label>
+          <div class="input-group">
+            <input type="number" id="rate" value="6.5" step="0.01" class="rate-input">
+            <span class="input-symbol-right">%</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fees">Upfront Fees</label>
+          <div class="input-group">
+            <span class="input-symbol">$</span>
+            <input type="number" id="fees" value="0">
+          </div>
+        </div>
+
+        <div class="form-group slider-group">
+          <div class="slider-label">
+            <span>Term (Months)</span>
+            <span id="term-value" class="slider-value">60</span>
+          </div>
+          <input type="range" id="term" min="1" max="360" value="60">
+        </div>
+
+        <div class="form-group slider-group">
+          <div class="slider-label">
+            <span>Amortization (Months)</span>
+            <span id="amort-value" class="slider-value">240</span>
+          </div>
+          <input type="range" id="amortization" min="1" max="360" value="240">
+        </div>
+
+        <div class="form-group slider-group">
+          <div class="slider-label">
+            <span>Repricing Period (Months)</span>
+            <span id="repricing-value" class="slider-value">60</span>
+          </div>
+          <input type="range" id="repricing" min="1" max="60" value="60">
+        </div>
+
+        <div class="form-group">
+          <label for="ltv">Loan to Value (LTV)</label>
+          <select id="ltv">
+            <option value="0.70">70%</option>
+            <option value="0.80" selected>80%</option>
+            <option value="0.90">90%</option>
+            <option value="0.95">95%</option>
+            <option value="1.00">100%</option>
+          </select>
+        </div>
+
+        <div class="form-group risk-and-newrel">
+            <div class="risk-select-group">
+                <label for="risk">Risk Rating</label>
+                <select id="risk">
+                    <option value="1">1 - Excellent</option>
+                    <option value="2">2 - Good</option>
+                    <option value="3" selected>3 - Average</option>
+                    <option value="4">4 - Below Average</option>
+                    <option value="5">5 - Poor</option>
+                </select>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="newRelationship">
+                <label for="newRelationship">New Relationship Credit</label>
+            </div>
+        </div>
+
+      </div> <button type="submit" id="submit-btn" disabled>Calculate Loan Price</button>
+    </form>
+  </div> <div id="results-screen" class="screen" style="display: none;">
+    <div id="results"></div>
+    <div class="results-actions">
+      <button id="back-to-form-btn">← New Scenario</button>
+    </div>
+  </div> 
+</div>
+
+<script>
+  // --- 1. Global Variables ---
+  let apiRates = null; 
+  const apiUrl = 'https://bankersiq.com/api/trates/';
+  const ROA_TARGET = 0.02; // 2.00% Target ROA
+
+  // Element references
+  const form = document.getElementById('loan-pricer-form');
+  const statusEl = document.getElementById('api-status');
+  const submitBtn = document.getElementById('submit-btn');
+  const resultsEl = document.getElementById('results');
+  const formScreen = document.getElementById('form-screen');
+  const resultsScreen = document.getElementById('results-screen');
+
+  // Input references for interaction listener
+  const interactiveInputs = Array.from(form.querySelectorAll('input, select'));
+  const termEl = document.getElementById('term');
+  const amortEl = document.getElementById('amortization');
+  const repricingEl = document.getElementById('repricing');
+  const termVal = document.getElementById('term-value');
+  const amortVal = document.getElementById('amort-value');
+  const repricingVal = document.getElementById('repricing-value');
+
+  // --- 2. Fetch API Data ---
+  window.addEventListener('load', function() {
+    fetch(apiUrl)
+      .then(response => response.ok ? response.json() : Promise.reject('Network response was not ok'))
+      .then(data => {
+        apiRates = data.values;
+        if (typeof apiRates !== 'object' || apiRates === null) { throw new Error('API data format is not the expected object.'); }
+        statusEl.innerHTML = " Cost of Funds data loaded successfully.";
+        // Use hardcoded color values here for best cross-platform compatibility
+        statusEl.style.color = "#28a745"; 
+        submitBtn.disabled = false;
+      })
+      .catch(error => {
+        console.error('Error fetching API data:', error);
+        statusEl.innerHTML = " Error loading Cost of Funds data. Calculations may be inaccurate.";
+        // Use hardcoded color values here for best cross-platform compatibility
+        statusEl.style.color = "#dc3545"; 
+        submitBtn.disabled = false;
+      });
+  });
+
+  // --- 3. Hide API Status on User Interaction ---
+  let hasInteracted = false;
+  function hideStatusOnInteraction() {
+      if (!hasInteracted) {
+          statusEl.style.display = 'none';
+          hasInteracted = true;
+      }
+  }
+
+  interactiveInputs.forEach(input => {
+      input.addEventListener('input', hideStatusOnInteraction);
+      if (input.tagName === 'SELECT' || input.type === 'checkbox') {
+          input.addEventListener('change', hideStatusOnInteraction);
+      }
+  });
+
+  // --- 4. Slider Event Listeners ---
+  termEl.addEventListener('input', function() {
+    const newTerm = parseInt(this.value);
+    termVal.textContent = newTerm;
+    repricingEl.max = newTerm; 
+    
+    // Term updates Amortization
+    amortEl.value = newTerm;
+    amortVal.textContent = newTerm;
+    
+    // Term updates Repricing
+    repricingEl.value = newTerm; 
+    repricingVal.textContent = newTerm; 
+  });
+
+  amortEl.addEventListener('input', function() { 
+    const newAmort = parseInt(this.value);
+    const currentTerm = parseInt(termEl.value);
+    
+    // Ensure Amortization is never less than Term
+    if (newAmort < currentTerm) {
+      amortEl.value = currentTerm;
+      amortVal.textContent = currentTerm;
+    } else {
+      amortVal.textContent = newAmort;
+    }
+  });
+    
+  // Repricing slider now only updates its label when manually adjusted.
+  repricingEl.addEventListener('input', function() { repricingVal.textContent = this.value; });
+
+  // --- Risk Provision / Expected Loss Function ---
+  function calculateExpectedLoss(risk, principal, averagePrincipal, ltv) {
+    // Note: We use fixed defaults for missing external stats (financial.attributes)
+
+    // Assumed Minimum Loan-to-Value (LTV) for LGD calculation if not provided
+    const MIN_LTV = 0.80; 
+    // Assumed Expected Recovery Rate (e.g., 60% of collateral value is recovered)
+    const EXPECTED_RECOVERY_RATE = 0.60; 
+    // Assumed PD based on risk rating (1-5) if external statistics are unavailable
+    const BASE_PD_MAPPING = {
+        1: 0.005, // 0.5% PD for Excellent
+        2: 0.010, // 1.0% PD for Good
+        3: 0.020, // 2.0% PD for Average
+        4: 0.035, // 3.5% PD for Below Average
+        5: 0.050, // 5.0% PD for Poor
+    };
+
+    // 1. PROBABILITY OF DEFAULT (PD) - Risk of borrower defaulting
+    let probabilityOfDefault = BASE_PD_MAPPING[risk] || 0.02; // Default 2% PD (from risk 3)
+    
+    // **NOTE:** Logic for using external 'getStatistic' is commented out as the function is not defined here.
+    /*
+    if (risk && risk !== 'NULL' && typeof getStatistic === 'function') {
+      // Logic for complex PD calculation goes here if external functions were available
+      // For now, we rely solely on the BASE_PD_MAPPING
+    }
+    */
+
+    // 2. EXPOSURE AT DEFAULT (EAD) - Amount at risk when default occurs
+    const exposureAtDefault = averagePrincipal; // Use average principal as EAD
+
+    // 3. LOSS GIVEN DEFAULT (LGD) - Percentage of exposure lost after recovery
+    if (!ltv) {
+      ltv = MIN_LTV;
+    }
+
+    // Calculate collateral value: EAD / LTV
+    // This assumes the LTV value from the form represents the collateral necessary for the EAD
+    const collateralValue = exposureAtDefault / ltv; 
+    
+    // Calculate recovery amount: collateral value × recovery rate
+    const recoveryAmount = collateralValue * EXPECTED_RECOVERY_RATE;
+    
+    // LGD = (EAD - Recovery) / EAD
+    // If recovery exceeds EAD, LGD = 0 (no loss)
+    let lossGivenDefault = Math.max(0, (exposureAtDefault - recoveryAmount) / exposureAtDefault);
+    
+    // Ensure LGD is between 0 and 1 (0% to 100% loss)
+    lossGivenDefault = Math.max(0, Math.min(1, lossGivenDefault));
+
+    // 4. EXPECTED LOSS = PD × LGD × EAD
+    const expectedLoss = probabilityOfDefault * lossGivenDefault * exposureAtDefault;
+
+    // Console Logging for Transparency
+    console.log(`--- Expected Loss (EL) Calculation ---`);
+    console.log(`Input Risk Rating (PD Source): ${risk} (${(probabilityOfDefault * 100).toFixed(2)}% PD)`);
+    console.log(`Input LTV: ${(ltv * 100).toFixed(1)}%`);
+    console.log(`Exposure at Default (EAD - Avg Principal): $${exposureAtDefault.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+    console.log(`Estimated Collateral Value (EAD / LTV): $${collateralValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+    console.log(`Estimated Recovery Amount: $${recoveryAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+    console.log(`Loss Given Default (LGD): ${(lossGivenDefault * 100).toFixed(2)}%`);
+    console.log(`Final Expected Loss (EL): $${expectedLoss.toFixed(2)}`);
+    console.log(`----------------------------------------`);
+    
+    return expectedLoss;
+  }
+  // --- END Risk Provision / Expected Loss Function ---
+  
+    function costofFundsSlice(principal, monthlyRate, term, amortization, treasuryCurve, newRelationship = false) {
+        //Calculates the cost of funds using slice method
+        const fundingBalance = newRelationship == true || newRelationship == "true" ? principal * .90 : principal;
+        // CHANGED from global 'payment' to local 'let payment'
+        let payment = fundingBalance * (monthlyRate * Math.pow(1 + monthlyRate, amortization)) / (Math.pow(1 + monthlyRate, amortization) - 1);
+        let sigma_COF = 0;
+        let period_principal = fundingBalance;
+        let paydown = 0;
+        let period = 0;
+        let k = .0040;
+        for (period = 1; period < term; period++) {
+            paydown = payment - period_principal * monthlyRate;
+            sigma_COF += parseFloat(treasuryCurve[period] + k) * paydown * period;
+            period_principal -= paydown;
+        }
+        paydown = period_principal;
+        sigma_COF += parseFloat(treasuryCurve[period] + k) * paydown * period;
+        return (sigma_COF / term).toFixed(2);
+    }
+
+
+  // --- 5. Form Submission ---
+  form.addEventListener('submit', function(event) {
+    event.preventDefault(); 
+
+    // Gather Inputs
+    const principal = parseFloat(document.getElementById('principal').value);
+    const annualRate = parseFloat(document.getElementById('rate').value);
+    const fees = parseFloat(document.getElementById('fees').value);
+    const term = parseInt(document.getElementById('term').value);
+    const amortization = parseInt(document.getElementById('amortization').value);
+    const repricingTerm = document.getElementById('repricing').value;
+    const ltv = parseFloat(document.getElementById('ltv').value);
+    const risk = parseInt(document.getElementById('risk').value);
+    const isNewRel = document.getElementById('newRelationship').checked;
+
+    if (apiRates && annualRate > 0) {
+        // Core Loan Calculations
+        const monthlyRate = (annualRate / 100) / 12;
+        let monthlyPayment, totalInterestPaid, remainingBalance, balloonPayment;
+        const p = principal;
+        const r = monthlyRate;
+        const a = amortization;
+        const t = term;
+        const termInYears = term / 12; 
+        
+        // Use p, r, a for accurate payment calculation
+        monthlyPayment = p * (r * Math.pow(1 + r, a)) / (Math.pow(1 + r, a) - 1);
+        
+        // Calculate Remaining Balance, Total Interest, and Total Payments (Required for display/inputs)
+        remainingBalance = p * (Math.pow(1 + r, a) - Math.pow(1 + r, t)) / (Math.pow(1 + r, a) - 1);
+        balloonPayment = (t < a) ? remainingBalance : 0;
+        const totalPayments = monthlyPayment * t;
+        const totalPrincipalPaid = p - remainingBalance;
+        totalInterestPaid = totalPayments - totalPrincipalPaid;
+        const annualInterestIncome = totalInterestPaid / termInYears;
+        
+        // Cumulative Average Principal Calculation
+        let cummulativePrincipal = 0;
+        let tempPrincipal = principal;
+        let month = 0;
+        while (month < term && tempPrincipal > 0) {
+          cummulativePrincipal += tempPrincipal;
+          const interestPayment = tempPrincipal * monthlyRate;
+          const paydown = monthlyPayment - interestPayment;
+          tempPrincipal -= paydown;
+          month++;
+        }
+        const averagePrincipal = cummulativePrincipal / term;
+        console.log("Average Principal:", averagePrincipal);
+
+        // Profitability Analysis
+        let costOfFunds = parseFloat(costofFundsSlice(principal, monthlyRate, term, amortization, apiRates, isNewRel));
+
+        // **UPDATED RISK PROVISION CALCULATION:** Using Expected Loss
+        const riskProvision = calculateExpectedLoss(risk, principal, averagePrincipal, ltv);
+        
+        const annualFees = fees / termInYears;
+        const totalIncome = annualInterestIncome + annualFees;
+
+        const fixedOriginationExpense = 500;
+        const principalCostMaximum = 1500000;
+        const variableOriginationFactor = 0.01;
+        const fixedServicingExpense = 500;
+        const loanServicingFactor = 0.0025;
+        const taxRate =  0.27;
+
+        const originationExpense = (fixedOriginationExpense + Math.min(principal, principalCostMaximum) * variableOriginationFactor) / Math.min(termInYears, 10);
+        const servicingExpense = fixedServicingExpense + principal * loanServicingFactor / (term * 12); 
+
+        const pretax = (totalIncome - costOfFunds - originationExpense - servicingExpense);
+        let taxExpense = pretax * taxRate;
+        
+        // Ensure taxExpense is not negative before using it for calculation
+        if (taxExpense < 0) {
+            taxExpense = 0;
+        }
+
+        const taxAdjusted = pretax - taxExpense;       
+        const netProfit = taxAdjusted - riskProvision;
+
+        // ROA and Letter Grade
+        const roa = netProfit / averagePrincipal; 
+        const grade = calculateGrade(roa);
+
+        // Display Results & Switch Screens
+        displayResults(monthlyPayment, balloonPayment, totalInterestPaid, totalIncome, costOfFunds, riskProvision, taxExpense, netProfit, roa, grade);
+
+        formScreen.style.display = 'none';
+        resultsScreen.style.display = 'block';
+    }
+  });
+
+  // --- 6. Helper Functions ---
+
+  function calculateGrade(roa) {
+    const roaRatio = roa / ROA_TARGET;
+    let letter = 'F';
+
+    // REVISED GRADING THRESHOLDS
+    if (roaRatio >= 1.00) { letter = 'A'; } 
+    else if (roaRatio >= 0.70) { letter = 'B'; } 
+    else if (roaRatio >= 0.40) { letter = 'C'; } 
+    else if (roaRatio >= 0.10) { letter = 'D'; } 
+
+    return `<span class="grade-${letter}">${letter}</span>`;
+  }
+
+  function formatCurrency(num) {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
+  }
+
+  function formatPercent(num) {
+    return (num * 100).toFixed(2) + '%';
+  }
+
+  function displayResults(payment, balloon, interest, income, cof, risk, tax, profit, roa, grade) {
+    const profitClass = profit >= 0 ? 'profit' : 'loss';
+    const customerName = document.getElementById('customerName').value || "Unnamed Client";
+
+    resultsEl.innerHTML = `
+      <p style="font-size: 1.2em; font-weight: bold; margin-bottom: 20px; padding-top: 10px;">Pricing Results for: ${customerName}</p>
+      <div class="results-grid">
+
+        <div class="results-card loan-details-card"> 
+          <h4>Loan Details</h4>
+          <p>
+            <span class="result-label">Monthly P&I Payment:</span>
+            <span class="result-value">${formatCurrency(payment)}</span>
+          </p>
+          <p>
+            <span class="result-label">Total Interest Paid:</span>
+            <span class="result-value">${formatCurrency(interest)}</span>
+          </p>
+          <p>
+            <span class="result-label">Balloon Payment (${document.getElementById('term').value} mos):</span>
+            <span class="result-value">${formatCurrency(balloon)}</span>
+          </p>
+        </div>
+
+        <div class="results-card">
+          <h4>Profitability Analysis (Annualized)</h4>
+          <p>
+            <span class="result-label">Total Annual Income:</span>
+            <span class="result-value profit">${formatCurrency(income)}</span>
+          </p>
+          <p>
+            <span class="result-label">Cost of Funds (Annual):</span>
+            <span class="result-value loss">(${formatCurrency(cof)})</span>
+          </p>
+          <p>
+            <span class="result-label">Expected Loss (Annual):</span>
+            <span class="result-value loss">(${formatCurrency(risk)})</span>
+          </p>
+          <p>
+            <span class="result-label">Tax Expense (Annual):</span>
+            <span class="result-value loss">(${formatCurrency(tax)})</span>
+          </p>
+          <hr style="border-top: 1px solid var(--border-color); margin: 10px 0;">
+          <p>
+            <span class="result-label">Estimated **Net Profit** (Annual):</span>
+            <span class="result-value ${profitClass}">${formatCurrency(profit)}</span>
+          </p>
+        </div>
+
+        <div class="results-card" style="grid-column: 1 / -1;">
+          <h4>Return on Assets (ROA) Assessment</h4>
+          <p style="font-size: 1.4em;">
+            <span class="result-label">Annualized ROA (on Avg. Principal):</span>
+            <span class="result-value">${formatPercent(roa)}</span>
+          </p>
+          <p style="font-size: 1.4em;">
+            <span class="result-label">Pricing Grade:</span>
+            <span class="result-value">${grade}</span>
+          </p>
+        </div>
+
+      </div>
+    `;
+  }
+
+  // --- 7. UX Functionality ---
+  document.getElementById('back-to-form-btn').addEventListener('click', function() {
+    resultsScreen.style.display = 'none';
+    formScreen.style.display = 'block';
+  });
+</script>
